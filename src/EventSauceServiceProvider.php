@@ -46,7 +46,7 @@ class EventSauceServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('config.php'),
+                __DIR__.'/../config/config.php' => config_path('eventsauce.php'),
             ], 'config');
         }
     }
