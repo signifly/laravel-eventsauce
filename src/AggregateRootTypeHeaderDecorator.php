@@ -9,6 +9,8 @@ use EventSauce\EventSourcing\MessageDecorator;
 
 class AggregateRootTypeHeaderDecorator implements MessageDecorator
 {
+    const AGGREGATE_ROOT_TYPE = '__aggregate_root_type';
+
     private string $aggregateRootType;
 
     public function __construct(string $aggregateRootClassName, ClassNameInflector $classNameInflector = null)
@@ -20,7 +22,7 @@ class AggregateRootTypeHeaderDecorator implements MessageDecorator
     public function decorate(Message $message): Message
     {
         return $message->withHeaders([
-            '__aggregate_root_type' => $this->aggregateRootType,
+            self::AGGREGATE_ROOT_TYPE => $this->aggregateRootType,
         ]);
     }
 }
