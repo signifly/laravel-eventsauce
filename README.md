@@ -10,9 +10,9 @@ This is where your description should go. Try and limit it to a paragraph or two
 
 ## Support us
 
-We invest a lot of resources into creating [best in class open source packages](https://signifly.be/open-source). You can support us by [buying one of our paid products](https://signifly.be/open-source/support-us). 
+We invest a lot of resources into creating [best in class open source packages](https://signifly.com/open-source). You can support us by [buying one of our paid products](https://signifly.com/open-source/support-us). 
 
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://signifly.be/about-us). We publish all received postcards on [our virtual postcard wall](https://signifly.be/open-source/postcards).
+We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://signifly.com/about-us). We publish all received postcards on [our virtual postcard wall](https://signifly.com/open-source/postcards).
 
 ## Installation
 

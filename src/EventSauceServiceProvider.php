@@ -24,10 +24,12 @@ class EventSauceServiceProvider extends ServiceProvider
             GenerateCommand::class,
         ]);
 
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'eventsauce');
+
         $this->app->bind(MessageRepository::class, function (Container $container) {
             return new DatabaseMessageRepository(
                 $container->make('db'),
-                'domain_messages',
+                config('eventsauce.domain_messages_table', 'domain_messages'),
                 $container->make(MessageSerializer::class)
             );
         });
@@ -42,6 +44,11 @@ class EventSauceServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/config.php' => config_path('config.php'),
+            ], 'config');
+        }
     }
 
     public function provides()

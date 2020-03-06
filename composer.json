@@ -14,14 +14,21 @@
             "role": "Developer"
         }
     ],
+    "repositories": [
+        {"type": "composer", "url": "https://repo.packagist.com/signifly/"},
+        {"packagist.org": false}
+    ],
     "require": {
         "php": "^7.4",
+        "ext-json": "*",
         "eventsauce/eventsauce": "0.8.*",
-        "laravel/framework": "^7.0"
+        "laravel/framework": "^7.0",
+        "signifly/eventsource-generator": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
-        "orchestra/testbench": "^5.0"
+        "orchestra/testbench": "^5.0",
+        "spatie/temporary-directory": "1.2.*"
     },
     "autoload": {
         "psr-4": {
