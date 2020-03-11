@@ -40,6 +40,7 @@ class DatabaseMessageRepositoryTest extends TestCase
             Header::EVENT_TYPE => get_class($testEvent),
             Header::AGGREGATE_ROOT_ID => 'aggregate-root-id',
             Header::AGGREGATE_ROOT_ID_TYPE => 'aggregate-root-id-type',
+            Header::AGGREGATE_ROOT_VERSION => 1,
             Header::TIME_OF_RECORDING => PointInTime::fromDateTime(new DateTimeImmutable())->toString(),
         ];
 
@@ -53,11 +54,12 @@ class DatabaseMessageRepositoryTest extends TestCase
         $this->assertEquals($headers[Header::EVENT_TYPE], get_class($testEvent));
         $this->assertEquals($headers[Header::AGGREGATE_ROOT_ID], $storedDomainMessage->aggregate_root_id);
         $this->assertEquals($headers[Header::AGGREGATE_ROOT_ID_TYPE], $storedDomainMessage->aggregate_root_id_type);
+        $this->assertEquals($headers[Header::AGGREGATE_ROOT_VERSION], $storedDomainMessage->aggregate_root_version);
         $this->assertEquals($headers[Header::TIME_OF_RECORDING], $storedDomainMessage->recorded_at);
 
         $payload = json_decode($storedDomainMessage->payload, true);
 
-        $this->assertCount(5, $payload['headers']);
+        $this->assertCount(6, $payload['headers']);
         $this->assertEquals(1, $payload['payload']['amount']);
     }
 
