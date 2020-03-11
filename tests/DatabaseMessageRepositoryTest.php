@@ -9,6 +9,7 @@ use EventSauce\EventSourcing\Message;
 use EventSauce\EventSourcing\MessageRepository;
 use EventSauce\EventSourcing\PointInTime;
 use Illuminate\Support\Facades\DB;
+use Signifly\LaravelEventSauce\DatabaseMessageRepository;
 use Signifly\LaravelEventSauce\Tests\Fixtures\Identifier;
 use Signifly\LaravelEventSauce\Tests\Fixtures\TestEvent;
 
@@ -21,6 +22,12 @@ class DatabaseMessageRepositoryTest extends TestCase
         parent::setUp();
 
         $this->repository = app(MessageRepository::class);
+    }
+
+    /** @test */
+    public function it_resolves_from_container()
+    {
+        $this->assertInstanceOf(DatabaseMessageRepository::class, $this->repository);
     }
 
     /** @test **/
@@ -72,7 +79,6 @@ class DatabaseMessageRepositoryTest extends TestCase
         $message = new Message($testEvent, $headers);
 
         $this->repository->persist($message);
-
 
         $messages = $this->repository->retrieveAll($identifier);
 
