@@ -9,6 +9,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Signifly\LaravelEventSauce\Console\GenerateCommand;
 use Signifly\LaravelEventSauce\Console\ReplayCommand;
+use Signifly\LaravelEventSauce\Contracts\AggregateRootRepositoryFactory as AggregateRootRepositoryFactoryContract;
 
 class EventSauceServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,7 @@ class EventSauceServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(MessageSerializer::class, ConstructingMessageSerializer::class);
+        $this->app->bind(AggregateRootRepositoryFactoryContract::class, AggregateRootRepositoryFactory::class);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Signifly\LaravelEventSauce;
 use EventSauce\EventSourcing\AggregateRoot;
 use EventSauce\EventSourcing\AggregateRootId;
 use EventSauce\EventSourcing\AggregateRootRepository as AggregateRootRepositoryContract;
+use Signifly\LaravelEventSauce\Contracts\AggregateRootRepositoryFactory;
 
 abstract class AggregateRootRepository implements AggregateRootRepositoryContract
 {
