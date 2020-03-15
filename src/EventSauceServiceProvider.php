@@ -47,9 +47,8 @@ class EventSauceServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('eventsauce.php'),
-            ], 'config');
+            $this->publishConfig();
+            $this->publishMigration();
         }
     }
 
@@ -59,5 +58,26 @@ class EventSauceServiceProvider extends ServiceProvider
             ReplayCommand::class,
             GenerateCommand::class,
         ];
+    }
+
+    private function publishConfig(): void
+    {
+        $this->publishes([
+            __DIR__.'/../config/config.php' => config_path('eventsauce.php'),
+        ], 'config');
+    }
+
+    private function publishMigration(): void
+    {
+        if (class_exists('CreateDomainMessagesTable')) {
+            return;
+        }
+
+        $tableName = config('eventsauce.domain_messages_table', 'domain_messages');
+        $timestamp = date('Y_m_d_His');
+
+        $this->publishes([
+            __DIR__.'/../stubs/create_domain_messages_table.php.stub' => database_path("/migrations/{$timestamp}_create_{$tableName}_table.php"),
+        ], 'migrations');
     }
 }
