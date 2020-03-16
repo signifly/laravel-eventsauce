@@ -22,7 +22,7 @@ class CreateDomainStatesTable extends Migration
             $table->unsignedInteger('process_version');
             $table->text('state');
 
-            $table->unique(['process_id', 'process_type', 'process_version']);
+            $table->unique(['process_id', 'process_type', 'process_version'], 'domain_states_uniq');
         });
     }
 
