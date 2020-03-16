@@ -25,7 +25,6 @@ class CreateDomainMessagesTable extends Migration
 
             $table->unique(['aggregate_root_id', 'aggregate_root_id_type', 'aggregate_root_version']);
             $table->index(['aggregate_root_id', 'aggregate_root_id_type', 'recorded_at']);
-            $table->index(['aggregate_root_id', 'aggregate_root_id_type', 'aggregate_root_version', 'recorded_at']);
         });
     }
 
