@@ -57,7 +57,7 @@ class DatabaseMessageRepository implements MessageRepository
     public function retrieveAll(AggregateRootId $id): Generator
     {
         $payloads = $this->baseQuery($id)
-            ->orderBy('recorded_at')
+            ->orderBy('aggregate_root_version')
             ->get('payload');
 
         return $this->yieldMessagesForResult($payloads);
@@ -67,7 +67,7 @@ class DatabaseMessageRepository implements MessageRepository
     {
         $payloads = $this->baseQuery($id)
             ->where('aggregate_root_version', '>', $aggregateRootVersion)
-            ->orderBy('recorded_at')
+            ->orderBy('aggregate_root_version')
             ->get('payload');
 
         return $this->yieldMessagesForResult($payloads);

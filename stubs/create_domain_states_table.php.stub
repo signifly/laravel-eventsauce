@@ -17,12 +17,11 @@ class CreateDomainStatesTable extends Migration
             $table->increments('id');
             $table->string('event_id', 36);
             $table->string('state_type', 100);
-            $table->string('process_id', 36)->nullable()->index();
+            $table->string('process_id', 36);
             $table->string('process_type', 100);
-            $table->integer('process_version')->index();
+            $table->unsignedInteger('process_version');
             $table->text('state');
 
-            $table->index(['process_id', 'process_type']);
             $table->unique(['process_id', 'process_type', 'process_version']);
         });
     }

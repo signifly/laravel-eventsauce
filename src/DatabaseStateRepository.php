@@ -32,11 +32,10 @@ class DatabaseStateRepository implements StateRepository
     {
         $result = $this->connection()
             ->table($this->tableName)
-            ->select('state', 'state_type', 'process_id', 'process_type', 'process_version')
             ->where('process_id', $processId)
             ->where('process_type', $type)
             ->orderBy('process_version', 'desc')
-            ->first();
+            ->first(['state', 'state_type', 'process_id', 'process_type', 'process_version']);
 
         if (! $result) {
             return null;

@@ -19,7 +19,7 @@ class CreateDomainMessagesTable extends Migration
             $table->string('event_type', 100);
             $table->string('aggregate_root_id', 36);
             $table->string('aggregate_root_id_type');
-            $table->integer('aggregate_root_version');
+            $table->unsignedInteger('aggregate_root_version');
             $table->dateTime('recorded_at', 6);
             $table->text('payload');
 
