@@ -17,13 +17,15 @@ class CreateDomainMessagesTable extends Migration
             $table->increments('id');
             $table->string('event_id', 36);
             $table->string('event_type', 100);
-            $table->string('aggregate_root_id', 36)->index();
+            $table->string('aggregate_root_id', 36);
             $table->string('aggregate_root_id_type');
-            $table->integer('aggregate_root_version')->index();
-            $table->dateTime('recorded_at', 6)->index();
+            $table->integer('aggregate_root_version');
+            $table->dateTime('recorded_at', 6);
             $table->text('payload');
 
-            $table->unique(['aggregate_root_id', 'aggregate_root_version']);
+            $table->unique(['aggregate_root_id', 'aggregate_root_id_type', 'aggregate_root_version']);
+            $table->index(['aggregate_root_id', 'aggregate_root_id_type', 'recorded_at']);
+            $table->index(['aggregate_root_id', 'aggregate_root_id_type', 'aggregate_root_version', 'recorded_at']);
         });
     }
 
