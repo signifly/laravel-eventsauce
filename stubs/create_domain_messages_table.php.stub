@@ -23,8 +23,8 @@ class CreateDomainMessagesTable extends Migration
             $table->dateTime('recorded_at', 6);
             $table->text('payload');
 
-            $table->unique(['aggregate_root_id', 'aggregate_root_id_type', 'aggregate_root_version']);
-            $table->index(['aggregate_root_id', 'aggregate_root_id_type', 'recorded_at']);
+            $table->unique(['aggregate_root_id', 'aggregate_root_id_type', 'aggregate_root_version'], 'domain_messages_uniq');
+            $table->index(['aggregate_root_id', 'aggregate_root_id_type', 'recorded_at'], 'domain_messages_idx');
         });
     }
 
