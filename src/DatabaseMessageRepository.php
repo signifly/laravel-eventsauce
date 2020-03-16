@@ -12,6 +12,7 @@ use EventSauce\EventSourcing\Serialization\MessageSerializer;
 use Generator;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
 
@@ -56,9 +57,7 @@ class DatabaseMessageRepository implements MessageRepository
 
     public function retrieveAll(AggregateRootId $id): Generator
     {
-        $payloads = $this->baseQuery($id)
-            ->orderBy('aggregate_root_version')
-            ->get('payload');
+        $payloads = $this->baseQuery($id)->get('payload');
 
         return $this->yieldMessagesForResult($payloads);
     }
@@ -67,7 +66,6 @@ class DatabaseMessageRepository implements MessageRepository
     {
         $payloads = $this->baseQuery($id)
             ->where('aggregate_root_version', '>', $aggregateRootVersion)
-            ->orderBy('aggregate_root_version')
             ->get('payload');
 
         return $this->yieldMessagesForResult($payloads);
@@ -117,13 +115,14 @@ class DatabaseMessageRepository implements MessageRepository
         $this->tableName = $table;
     }
 
-    private function baseQuery(AggregateRootId $id): \Illuminate\Database\Query\Builder
+    private function baseQuery(AggregateRootId $id): Builder
     {
         $aggregateRootIdType = (new DotSeparatedSnakeCaseInflector())->instanceToType($id);
 
         return $this->connection()
             ->table($this->tableName)
             ->where('aggregate_root_id', $id->toString())
-            ->where('aggregate_root_id_type', $aggregateRootIdType);
+            ->where('aggregate_root_id_type', $aggregateRootIdType)
+            ->orderBy('aggregate_root_version');
     }
 }

@@ -94,4 +94,79 @@ class DatabaseMessageRepositoryTest extends TestCase
         $this->assertInstanceOf(Message::class, $messageArray[0]);
         $this->assertInstanceOf(TestEvent::class, $messageArray[0]->event());
     }
+
+    /** @test */
+    public function it_can_retrieve_messages_after_a_version()
+    {
+        $testEvent = new TestEvent(1);
+        $identifier = new Identifier(1);
+
+        $headers = [
+            Header::EVENT_ID => 1,
+            Header::EVENT_TYPE => get_class($testEvent),
+            Header::AGGREGATE_ROOT_ID => $identifier->toString(),
+            Header::AGGREGATE_ROOT_ID_TYPE => (new DotSeparatedSnakeCaseInflector)->instanceToType($identifier),
+            Header::AGGREGATE_ROOT_VERSION => 1,
+            Header::TIME_OF_RECORDING => PointInTime::fromDateTime(new DateTimeImmutable())->toString(),
+        ];
+
+        $message = new Message($testEvent, $headers);
+        $messageTwo = new Message($testEvent, [
+            Header::EVENT_ID => 2,
+            Header::AGGREGATE_ROOT_VERSION => 2,
+        ] + $headers);
+
+        $this->repository->persist($message);
+        $this->repository->persist($messageTwo);
+
+        $messages = $this->repository->retrieveAllAfterVersion($identifier, 1);
+
+        $messageArray = [];
+
+        foreach ($messages as $message) {
+            $messageArray[] = $message;
+        }
+
+        $this->assertCount(1, $messageArray);
+        $this->assertInstanceOf(Message::class, $messageArray[0]);
+        $this->assertInstanceOf(TestEvent::class, $messageArray[0]->event());
+        $this->assertEquals(2, $messageArray[0]->aggregateVersion());
+    }
+
+    /** @test */
+    public function it_retrieves_all_messages_sorted_by_version()
+    {
+        $testEvent = new TestEvent(1);
+        $identifier = new Identifier(1);
+
+        $headers = [
+            Header::EVENT_ID => 1,
+            Header::EVENT_TYPE => get_class($testEvent),
+            Header::AGGREGATE_ROOT_ID => $identifier->toString(),
+            Header::AGGREGATE_ROOT_ID_TYPE => (new DotSeparatedSnakeCaseInflector)->instanceToType($identifier),
+            Header::AGGREGATE_ROOT_VERSION => 1,
+            Header::TIME_OF_RECORDING => PointInTime::fromDateTime(new DateTimeImmutable())->toString(),
+        ];
+
+        $message = new Message($testEvent, $headers);
+        $messageTwo = new Message($testEvent, [
+            Header::EVENT_ID => 2,
+            Header::AGGREGATE_ROOT_VERSION => 2,
+        ] + $headers);
+
+        $this->repository->persist($message);
+        $this->repository->persist($messageTwo);
+
+        $messages = $this->repository->retrieveAll($identifier);
+
+        $messageArray = [];
+
+        foreach ($messages as $message) {
+            $messageArray[] = $message;
+        }
+
+        $this->assertCount(2, $messageArray);
+        $this->assertEquals(1, $messageArray[0]->aggregateVersion());
+        $this->assertEquals(2, $messageArray[1]->aggregateVersion());
+    }
 }
