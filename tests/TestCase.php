@@ -3,13 +3,14 @@
 namespace Signifly\LaravelEventSauce\Tests;
 
 use CreateDomainMessagesTable;
+use CreateDomainStatesTable;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Signifly\LaravelEventSauce\EventSauceServiceProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
-class TestCase extends Orchestra
+abstract class TestCase extends Orchestra
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -19,15 +20,15 @@ class TestCase extends Orchestra
     protected function setUpDatabase()
     {
         if (! class_exists('CreateDomainMessagesTable')) {
-            $contents = file_get_contents(__DIR__.'/../stubs/create_domain_messages_table.php.stub');
+            include_once __DIR__.'/../stubs/create_domain_messages_table.php.stub';
+        }
 
-            $contents = str_replace('<?php', '', $contents);
-            $contents = str_replace('{{ migrationClassName }}', 'CreateDomainMessagesTable', $contents);
-            $migrationCode = str_replace('{{ tableName }}', 'domain_messages', $contents);
-            eval($migrationCode);
+        if (! class_exists('CreateDomainStatesTable')) {
+            include_once __DIR__.'/../stubs/create_domain_states_table.php.stub';
         }
 
         (new CreateDomainMessagesTable())->up();
+        (new CreateDomainStatesTable())->up();
     }
 
     protected function getPackageProviders($app)

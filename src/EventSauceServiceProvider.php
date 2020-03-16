@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use Signifly\LaravelEventSauce\Console\GenerateCommand;
 use Signifly\LaravelEventSauce\Console\ReplayCommand;
 use Signifly\LaravelEventSauce\Contracts\AggregateRootRepositoryFactory as AggregateRootRepositoryFactoryContract;
+use Signifly\LaravelEventSauce\Contracts\StateRepository;
 
 class EventSauceServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,13 @@ class EventSauceServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->bind(StateRepository::class, function (Container $container) {
+            return new DatabaseStateRepository(
+                $container->make('db'),
+                config('eventsauce.state_messages_table', 'state_messages')
+            );
+        });
+
         $this->app->bind(MessageSerializer::class, ConstructingMessageSerializer::class);
         $this->app->bind(AggregateRootRepositoryFactoryContract::class, AggregateRootRepositoryFactory::class);
     }
@@ -48,7 +56,7 @@ class EventSauceServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishConfig();
-            $this->publishMigration();
+            $this->publishMigrations();
         }
     }
 
@@ -67,7 +75,13 @@ class EventSauceServiceProvider extends ServiceProvider
         ], 'config');
     }
 
-    private function publishMigration(): void
+    private function publishMigrations(): void
+    {
+        $this->publishDomainMessagesMigration();
+        $this->publishDomainStatesMigration();
+    }
+
+    private function publishDomainMessagesMigration(): void
     {
         if (class_exists('CreateDomainMessagesTable')) {
             return;
@@ -78,6 +92,20 @@ class EventSauceServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../stubs/create_domain_messages_table.php.stub' => database_path("/migrations/{$timestamp}_create_{$tableName}_table.php"),
+        ], 'migrations');
+    }
+
+    private function publishDomainStatesMigration(): void
+    {
+        if (class_exists('CreateStateMessagesTable')) {
+            return;
+        }
+
+        $tableName = config('eventsauce.domain_states_table', 'domain_states');
+        $timestamp = date('Y_m_d_His');
+
+        $this->publishes([
+            __DIR__.'/../stubs/create_domain_states_table.php.stub' => database_path("/migrations/{$timestamp}_create_{$tableName}_table.php"),
         ], 'migrations');
     }
 }

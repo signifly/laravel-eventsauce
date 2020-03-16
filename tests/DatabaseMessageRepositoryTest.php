@@ -17,7 +17,7 @@ class DatabaseMessageRepositoryTest extends TestCase
 {
     private MessageRepository $repository;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
