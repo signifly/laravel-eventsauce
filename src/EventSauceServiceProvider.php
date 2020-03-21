@@ -29,18 +29,26 @@ class EventSauceServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'eventsauce');
 
         $this->app->bind(MessageRepository::class, function (Container $container) {
-            return new DatabaseMessageRepository(
+            $repository = new DatabaseMessageRepository(
                 $container->make('db'),
                 config('eventsauce.domain_messages_table', 'domain_messages'),
                 $container->make(MessageSerializer::class)
             );
+
+            $repository->setConnection(config('eventsauce.message_database_connection'));
+
+            return $repository;
         });
 
         $this->app->bind(StateRepository::class, function (Container $container) {
-            return new DatabaseStateRepository(
+            $repository = new DatabaseStateRepository(
                 $container->make('db'),
                 config('eventsauce.state_messages_table', 'state_messages')
             );
+
+            $repository->setConnection(config('eventsauce.state_database_connection'));
+
+            return $repository;
         });
 
         $this->app->bind(MessageSerializer::class, ConstructingMessageSerializer::class);

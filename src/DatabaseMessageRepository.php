@@ -105,7 +105,7 @@ class DatabaseMessageRepository implements MessageRepository
         return $this->database->connection($this->connection);
     }
 
-    public function setConnection(string $connection): void
+    public function setConnection(?string $connection): void
     {
         $this->connection = $connection;
     }
