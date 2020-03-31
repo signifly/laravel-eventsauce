@@ -11,7 +11,7 @@ use Signifly\EventSourceGenerator\YamlDefinitionLoader;
 
 class GenerateCommand extends Command
 {
-    protected $signature = 'eventsauce:generate {--d|dump: Triggers Composer dump-autoload}';
+    protected $signature = 'eventsauce:generate {--d|dump : Triggers composer dump-autoload}';
 
     protected $description = 'Generate EventSauce code.';
 
@@ -24,8 +24,12 @@ class GenerateCommand extends Command
             $this->resolveWriter()
         );
 
-        if ($this->hasOption('dump')) {
+        if ($this->option('dump')) {
+            $this->line('');
+            $this->line('Composer dump started...');
             $composer->dumpOptimized();
+            $this->line('Composer dump finished');
+            $this->line('');
         }
 
         $this->info('All done!');
