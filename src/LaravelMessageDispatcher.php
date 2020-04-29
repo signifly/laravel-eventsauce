@@ -22,11 +22,10 @@ class LaravelMessageDispatcher implements MessageDispatcher
     public function dispatch(Message ...$messages)
     {
         foreach ($this->consumers as $consumer) {
-            $jobClass = is_a($consumer, WithConsumerHandler::class, true)
-                ? $consumer::getConsumerHandler()
-                : HandleConsumer::class;
+            $job = is_a($consumer, WithConsumerHandler::class, true)
+                ? $consumer::getConsumerHandler(...$messages)
+                : new HandleConsumer($consumer, ...$messages);
 
-            $job = new $jobClass($consumer, ...$messages);
             if (is_a($consumer, ShouldQueue::class, true)) {
                 dispatch($job);
             } else {

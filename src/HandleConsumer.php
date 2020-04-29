@@ -8,9 +8,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Signifly\LaravelEventSauce\Contracts\HandleConsumer as HandleConsumerConstract;
+use Signifly\LaravelEventSauce\Contracts\ConsumerHandler;
 
-class HandleConsumer implements ShouldQueue, HandleConsumerConstract
+class HandleConsumer implements ShouldQueue, ConsumerHandler
 {
     use InteractsWithQueue, Queueable;
 

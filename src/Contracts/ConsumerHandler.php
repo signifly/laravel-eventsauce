@@ -5,7 +5,7 @@ namespace Signifly\LaravelEventSauce\Contracts;
 use EventSauce\EventSourcing\Message;
 use Illuminate\Contracts\Container\Container;
 
-interface HandleConsumer
+interface ConsumerHandler
 {
     /**
      * Create a new Consumer instance.
