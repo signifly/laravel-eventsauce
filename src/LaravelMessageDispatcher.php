@@ -5,6 +5,7 @@ namespace Signifly\LaravelEventSauce;
 use EventSauce\EventSourcing\Message;
 use EventSauce\EventSourcing\MessageDispatcher;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Signifly\LaravelEventSauce\Contracts\WithConsumerHandler;
 
 class LaravelMessageDispatcher implements MessageDispatcher
 {
@@ -21,10 +22,15 @@ class LaravelMessageDispatcher implements MessageDispatcher
     public function dispatch(Message ...$messages)
     {
         foreach ($this->consumers as $consumer) {
+            $jobClass = is_a($consumer, WithConsumerHandler::class, true)
+                ? $consumer::getConsumerHandler()
+                : HandleConsumer::class;
+
+            $job = new $jobClass($consumer, ...$messages);
             if (is_a($consumer, ShouldQueue::class, true)) {
-                dispatch(new HandleConsumer($consumer, ...$messages));
+                dispatch($job);
             } else {
-                dispatch_now(new HandleConsumer($consumer, ...$messages));
+                dispatch_now($job);
             }
         }
     }

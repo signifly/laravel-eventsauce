@@ -8,8 +8,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Signifly\LaravelEventSauce\Contracts\HandleConsumer as HandleConsumerConstract;
 
-class HandleConsumer implements ShouldQueue
+class HandleConsumer implements ShouldQueue, HandleConsumerConstract
 {
     use InteractsWithQueue, Queueable;
 
@@ -35,7 +36,7 @@ class HandleConsumer implements ShouldQueue
         $this->messages = $messages;
     }
 
-    public function handle(Container $container)
+    public function handle(Container $container): void
     {
         /** @var Consumer $consumer */
         $consumer = $container->make($this->consumer);
