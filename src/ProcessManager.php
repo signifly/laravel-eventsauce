@@ -42,6 +42,7 @@ abstract class ProcessManager extends EventConsumer implements Contract
         $processIds->each(function (ProcessId $processId) use ($type, $message) {
             $this->processId = $processId;
             $this->state = $this->repository->find($this->processId, $type) ?? $this->newState($this->processId, $type);
+            $priorState = $this->state->toArray();
 
             // Trigger processing hook and return if the return value is false
             if ($this instanceof WithProcessingHooks && $this->processing($message) === false) {
@@ -50,7 +51,10 @@ abstract class ProcessManager extends EventConsumer implements Contract
 
             parent::handle($message);
 
-            $this->repository->save($this->state);
+            $isNew = empty($priorState) && $this->state->version() === 0;
+            if ($isNew || $priorState !== $this->state->toArray()) {
+                $this->repository->save($this->state);
+            }
 
             // Trigger processed hook
             if ($this instanceof WithProcessingHooks) {

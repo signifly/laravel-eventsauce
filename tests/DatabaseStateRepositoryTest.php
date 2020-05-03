@@ -39,7 +39,7 @@ class DatabaseStateRepositoryTest extends TestCase
     }
 
     /** @test */
-    public function it_saves_multiple__states_to_the_database()
+    public function it_saves_multiple_states_to_the_database()
     {
         $this->assertDatabaseMissing('domain_states', ['process_type' => 'test']);
 

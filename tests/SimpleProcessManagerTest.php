@@ -62,7 +62,7 @@ class SimpleProcessManagerTest extends ProcessManagerTestCase
     }
 
     /** @test */
-    public function it_saves_state_change_to_repository()
+    public function it_saves_state_change_to_repository_from_empty_state()
     {
         $this->stateMock->shouldReceive('find')->once();
         $this->stateMock->shouldReceive('save')
@@ -70,6 +70,42 @@ class SimpleProcessManagerTest extends ProcessManagerTestCase
             ->once();
 
         $this->dispatch(new IncrementEvent());
+    }
+
+    /** @test */
+    public function it_saves_state_change_to_repository_from_existing_state()
+    {
+        $this->stateMock->shouldReceive('find')
+            ->andReturn(new State(
+                ProcessId::aggregateRootId($this->aggregateRootId()),
+                'something',
+                1,
+                ['counter' => 1]
+            ))
+            ->once();
+        $this->stateMock->shouldReceive('save')
+            ->withArgs(fn (State $state) => $state->toArray() == ['counter' => 2])
+            ->once();
+
+        $this->dispatch(new IncrementEvent());
+    }
+
+    /** @test */
+    public function it_does_not_save_state_when_no_changes_have_occured()
+    {
+        $this->stateMock->shouldReceive('find')
+            ->andReturn(new State(
+                ProcessId::aggregateRootId($this->aggregateRootId()),
+                'something',
+                1,
+                ['counter' => 1]
+            ))
+            ->once();
+        $this->stateMock->shouldReceive('save')
+            ->withArgs(fn (State $state) => $state->toArray() == ['counter' => 1])
+            ->never();
+
+        $this->dispatch(new NoopEvent());
     }
 
     protected function manager(): ProcessManager
