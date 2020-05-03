@@ -32,7 +32,7 @@ class DatabaseStateRepository implements StateRepository
     {
         $result = $this->connection()
             ->table($this->tableName)
-            ->where('process_id', $processId)
+            ->where('process_id', $processId->toString())
             ->where('process_type', $type)
             ->orderBy('process_version', 'desc')
             ->first(['state', 'state_type', 'process_id', 'process_type', 'process_version']);
@@ -58,7 +58,7 @@ class DatabaseStateRepository implements StateRepository
             ->insert([
                 'event_id' => Uuid::uuid4()->toString(),
                 'state_type' => $this->inflector->instanceToType($state),
-                'process_id' => $state->processId(),
+                'process_id' => $state->processId()->toString(),
                 'process_type' => $state->type(),
                 'process_version' => $state->version() + 1,
                 'state' => json_encode($state),
