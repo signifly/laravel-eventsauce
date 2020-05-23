@@ -37,7 +37,7 @@ abstract class ProcessManager extends EventConsumer implements Contract
     protected function processMessage(Message $message, AggregateRootId $aggregateRootId): void
     {
         $type = (new DotSeparatedSnakeCaseInflector())->instanceToType($this);
-        $processIds = $this->resolveProcessId($aggregateRootId, $message->event());
+        $processIds = $this->resolveProcessId($aggregateRootId, $message->event(), $message);
 
         $processIds->each(function (ProcessId $processId) use ($type, $message) {
             $this->processId = $processId;
@@ -63,7 +63,7 @@ abstract class ProcessManager extends EventConsumer implements Contract
         });
     }
 
-    protected function resolveProcessId(AggregateRootId $aggregateRootId, object $event): Collection
+    protected function resolveProcessId(AggregateRootId $aggregateRootId, object $event, Message $message): Collection
     {
         return collect([ProcessId::aggregateRootId($aggregateRootId)]);
     }
