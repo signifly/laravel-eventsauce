@@ -29,11 +29,18 @@ class AggregateRootRepositoryFactory implements Contract
                 new LaravelMessageDispatcher(...$consumers)
             ),
             new MessageDecoratorChain(
-                new DefaultHeadersDecorator(),
-                new AggregateRootTypeHeaderDecorator($aggregateRootClassName),
+                ...$this->resolveDefaultDecorators($aggregateRootClassName),
                 ...$this->resolveCustomDecorators()
             )
         );
+    }
+
+    protected function resolveDefaultDecorators(string $aggregateRootClassName): array
+    {
+        return [
+            new DefaultHeadersDecorator(),
+            new AggregateRootTypeHeaderDecorator($aggregateRootClassName),
+        ];
     }
 
     protected function resolveCustomDecorators(): array
