@@ -14,6 +14,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 use Ramsey\Uuid\Uuid;
 
 class DatabaseMessageRepository implements MessageRepository
@@ -57,7 +58,9 @@ class DatabaseMessageRepository implements MessageRepository
 
     public function retrieveAll(AggregateRootId $id): Generator
     {
-        $payloads = $this->baseQuery($id)->get('payload');
+        $payloads = $this->baseQuery($id)
+            ->select('payload')
+            ->cursor();
 
         return $this->yieldMessagesForResult($payloads);
     }
@@ -66,7 +69,8 @@ class DatabaseMessageRepository implements MessageRepository
     {
         $payloads = $this->baseQuery($id)
             ->where('aggregate_root_version', '>', $aggregateRootVersion)
-            ->get('payload');
+            ->select('payload')
+            ->cursor();
 
         return $this->yieldMessagesForResult($payloads);
     }
@@ -77,14 +81,15 @@ class DatabaseMessageRepository implements MessageRepository
             ->table($this->tableName)
             ->when($time !== null, fn ($query) => $query->where('recorded_at', '>', $time))
             ->orderBy('recorded_at')
-            ->get('payload');
+            ->select('payload')
+            ->cursor();
 
         foreach ($payloads as $payload) {
             yield from $this->serializer->unserializePayload(json_decode($payload->payload, true));
         }
     }
 
-    private function yieldMessagesForResult(Collection $payloads)
+    private function yieldMessagesForResult(LazyCollection $payloads)
     {
         foreach ($payloads as $payload) {
             $messages = $this->serializer->unserializePayload(json_decode($payload->payload, true));
