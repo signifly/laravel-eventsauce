@@ -16,7 +16,7 @@ use Signifly\LaravelEventSauce\ProjectorFinder;
 class ReplayCommand extends Command
 {
     protected $signature = 'eventsauce:replay {projector?*}
-                            {--after : Replay events after this date}';
+                            {--after= : Replay events after this date}';
 
     protected $description = 'Replay stored events';
 
