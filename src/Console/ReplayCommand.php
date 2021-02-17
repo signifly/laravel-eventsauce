@@ -43,6 +43,7 @@ class ReplayCommand extends Command
         $this->resetStateFor($consumers);
 
         // Apply events to consumers / projectors
+        $this->line('Replaying...');
         foreach ($messages as $message) {
             $dispatchers = $this->resolveDispatchersFrom($message, $consumers);
             $dispatchers->each->dispatch($message);
@@ -73,8 +74,10 @@ class ReplayCommand extends Command
     {
         $consumers
             ->map(fn ($consumer) => app($consumer))
-            ->each
-            ->resetState();
+            ->each(function ($consumer) {
+                $this->line(sprintf('Resetting state for %s', get_class($consumer)));
+                $consumer->resetState();
+            });
     }
 
     private function resolveDispatchersFrom(Message $message, Collection $consumers): Collection
