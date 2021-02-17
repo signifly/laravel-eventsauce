@@ -84,6 +84,10 @@ class ReplayCommand extends Command
 
         return $consumers
             ->filter(function ($consumer) use ($event, $methodName) {
+                if (isset($consumer::$accepts)) {
+                    return in_array(get_class($event), $consumer::$accepts);
+                }
+                
                 $this->consumerMethods[$consumer] ??= (new ReflectionClass($consumer))
                     ->getMethods(ReflectionMethod::IS_PUBLIC);
 
