@@ -52,7 +52,7 @@ class ReplayCommand extends Command
         $this->info(sprintf('All done! %s consumers have been replayed.', $consumers->count()));
     }
 
-    private function findProjectors(array $projectors = []): Collection
+    protected function findProjectors(array $projectors = []): Collection
     {
         if (count($projectors) > 0) {
             return collect($projectors)
@@ -70,7 +70,7 @@ class ReplayCommand extends Command
             ->findProjectors();
     }
 
-    private function resetStateFor(Collection $consumers): void
+    protected function resetStateFor(Collection $consumers): void
     {
         $consumers
             ->map(fn ($consumer) => app($consumer))
@@ -80,7 +80,7 @@ class ReplayCommand extends Command
             });
     }
 
-    private function resolveDispatchersFrom(Message $message, Collection $consumers): Collection
+    protected function resolveDispatchersFrom(Message $message, Collection $consumers): Collection
     {
         $event = $message->event();
         $methodName = $this->methodNameFor($event);
@@ -107,12 +107,12 @@ class ReplayCommand extends Command
             });
     }
 
-    private function after(): ?Carbon
+    protected function after(): ?Carbon
     {
         return ($after = $this->option('after')) ? Carbon::parse($after) : null;
     }
 
-    private function methodNameFor(object $event): string
+    protected function methodNameFor(object $event): string
     {
         return sprintf('handle%s', (new ReflectionClass($event))->getShortName());
     }
