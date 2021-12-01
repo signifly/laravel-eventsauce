@@ -76,20 +76,20 @@ class EventSauceServiceProvider extends ServiceProvider
         ];
     }
 
-    private function publishConfig(): void
+    protected function publishConfig(): void
     {
         $this->publishes([
             __DIR__.'/../config/config.php' => config_path('eventsauce.php'),
         ], 'config');
     }
 
-    private function publishMigrations(): void
+    protected function publishMigrations(): void
     {
         $this->publishDomainMessagesMigration();
         $this->publishDomainStatesMigration();
     }
 
-    private function publishDomainMessagesMigration(): void
+    protected function publishDomainMessagesMigration(): void
     {
         if (class_exists('CreateDomainMessagesTable')) {
             return;
@@ -103,7 +103,7 @@ class EventSauceServiceProvider extends ServiceProvider
         ], 'migrations');
     }
 
-    private function publishDomainStatesMigration(): void
+    protected function publishDomainStatesMigration(): void
     {
         if (class_exists('CreateStateMessagesTable')) {
             return;

@@ -19,15 +19,15 @@ use Ramsey\Uuid\Uuid;
 
 class DatabaseMessageRepository implements MessageRepository
 {
-    private DatabaseManager $database;
+    protected DatabaseManager $database;
 
-    private string $tableName;
+    protected string $tableName;
 
-    private MessageSerializer $serializer;
+    protected MessageSerializer $serializer;
 
-    private ?string $connection = null;
+    protected ?string $connection = null;
 
-    private const AGGREGATE_ROOT_TYPE = '__aggregate_root_type';
+    protected const AGGREGATE_ROOT_TYPE = '__aggregate_root_type';
 
     public function __construct(DatabaseManager $database, string $tableName, MessageSerializer $serializer)
     {
@@ -89,7 +89,7 @@ class DatabaseMessageRepository implements MessageRepository
         }
     }
 
-    private function yieldMessagesForResult(LazyCollection $payloads)
+    protected function yieldMessagesForResult(LazyCollection $payloads)
     {
         foreach ($payloads as $payload) {
             $messages = $this->serializer->unserializePayload(json_decode($payload->payload, true));
@@ -105,7 +105,7 @@ class DatabaseMessageRepository implements MessageRepository
             : 0;
     }
 
-    private function connection(): ConnectionInterface
+    protected function connection(): ConnectionInterface
     {
         return $this->database->connection($this->connection);
     }
@@ -120,7 +120,7 @@ class DatabaseMessageRepository implements MessageRepository
         $this->tableName = $table;
     }
 
-    private function baseQuery(AggregateRootId $id): Builder
+    protected function baseQuery(AggregateRootId $id): Builder
     {
         $aggregateRootIdType = (new DotSeparatedSnakeCaseInflector())->instanceToType($id);
 

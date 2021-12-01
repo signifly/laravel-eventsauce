@@ -35,7 +35,7 @@ class GenerateCommand extends Command
         $this->info('All done!');
     }
 
-    private function resolveWriter(): FileWriter
+    protected function resolveWriter(): FileWriter
     {
         $fileWriterClassName = config('eventsource-generator.writer', FilePerNamespaceWriter::class);
         $fileWriterArguments = config('eventsource-generator.writer_arguments', [
@@ -57,7 +57,7 @@ class GenerateCommand extends Command
         return app()->makeWith($fileWriterClassName, $fileWriterArguments);
     }
 
-    private function generateCode(array $inputFiles, FileWriter $writer)
+    protected function generateCode(array $inputFiles, FileWriter $writer)
     {
         $loader = new YamlDefinitionLoader(config('eventsource-generator.missing_examples', 'warn'));
         $dumper = new CodeDumper(config('eventsource-generator.loader_logging', false));

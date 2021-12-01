@@ -8,9 +8,9 @@ use Signifly\LaravelEventSauce\Contracts\State as Contract;
 
 class State extends Fluent implements Contract
 {
-    private ProcessId $processId;
-    private string $type;
-    private int $version;
+    protected ProcessId $processId;
+    protected string $type;
+    protected int $version;
 
     public function __construct(ProcessId $processId, string $type, int $version = 0, $attributes = [])
     {

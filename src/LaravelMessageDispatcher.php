@@ -12,7 +12,7 @@ class LaravelMessageDispatcher implements MessageDispatcher
     /**
      * @var array|string[]
      */
-    private array $consumers;
+    protected array $consumers;
 
     public function __construct(string ...$consumers)
     {

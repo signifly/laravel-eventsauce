@@ -32,7 +32,7 @@ class InMemoryStateRepository implements StateRepository
         return $this->states;
     }
 
-    private function getKeyFor(ProcessIdContract $processId, string $type): string
+    protected function getKeyFor(ProcessIdContract $processId, string $type): string
     {
         return str_replace('.', '-', $type).'.'.$processId->toString();
     }

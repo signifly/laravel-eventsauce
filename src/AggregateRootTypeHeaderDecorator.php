@@ -11,7 +11,7 @@ class AggregateRootTypeHeaderDecorator implements MessageDecorator
 {
     const AGGREGATE_ROOT_TYPE = '__aggregate_root_type';
 
-    private string $aggregateRootType;
+    protected string $aggregateRootType;
 
     public function __construct(string $aggregateRootClassName, ClassNameInflector $classNameInflector = null)
     {

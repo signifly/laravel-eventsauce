@@ -8,7 +8,7 @@ use Signifly\LaravelEventSauce\Contracts\ProcessId as Contract;
 
 class ProcessId implements Contract
 {
-    private string $identifier;
+    protected string $identifier;
 
     public function __construct(string $identifier)
     {

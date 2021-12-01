@@ -13,7 +13,7 @@ use Signifly\LaravelEventSauce\Contracts\AggregateRootRepositoryFactory as Contr
 
 class AggregateRootRepositoryFactory implements Contract
 {
-    private MessageRepository $messageRepository;
+    protected MessageRepository $messageRepository;
 
     public function __construct(MessageRepository $messageRepository)
     {

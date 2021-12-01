@@ -13,13 +13,13 @@ use Signifly\LaravelEventSauce\Contracts\StateRepository;
 
 class DatabaseStateRepository implements StateRepository
 {
-    private DatabaseManager $database;
+    protected DatabaseManager $database;
 
-    private string $tableName;
+    protected string $tableName;
 
-    private ClassNameInflector $inflector;
+    protected ClassNameInflector $inflector;
 
-    private ?string $connection = null;
+    protected ?string $connection = null;
 
     public function __construct(DatabaseManager $database, string $tableName, ClassNameInflector $inflector = null)
     {
@@ -65,7 +65,7 @@ class DatabaseStateRepository implements StateRepository
             ]);
     }
 
-    private function connection(): ConnectionInterface
+    protected function connection(): ConnectionInterface
     {
         return $this->database->connection($this->connection);
     }

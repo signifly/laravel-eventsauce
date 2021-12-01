@@ -16,7 +16,10 @@ use Signifly\LaravelEventSauce\ProjectorFinder;
 class ReplayCommand extends Command
 {
     protected $signature = 'eventsauce:replay {projector?*}
-                            {--after= : Replay events after this date}';
+                            {--after= : Replay events after specified date}
+                            {--after-version= : Replay events after specified version}
+                            {--root-id= : Filter messages to a specific aggregate root id}
+                            {--root-type= : Filter messages to a specific aggregate root type}';
 
     protected $description = 'Replay stored events';
 
@@ -37,7 +40,7 @@ class ReplayCommand extends Command
         $this->line(sprintf('Now replaying %s consumers...', $consumers->count()));
 
         // Retrieve messages / events (after date)
-        $messages = $messageRepository->retrieveAllForReplayingAfterDate($this->after());
+        $messages = $this->getMessagesFrom($messageRepository);
 
         // Reset state
         $this->resetStateFor($consumers);
@@ -50,6 +53,21 @@ class ReplayCommand extends Command
         }
 
         $this->info(sprintf('All done! %s consumers have been replayed.', $consumers->count()));
+    }
+
+    protected function getMessagesFrom(MessageRepository $messageRepository): \Generator
+    {
+        $afterVersion = $this->option('after-version');
+        $rootId = $this->option('root-id');
+        $rootType = $this->option('root-type');
+
+        if ($afterVersion && $rootId && $rootType) {
+            $aggregateRootId = $rootType::fromString($rootId);
+
+            return $messageRepository->retrieveAllAfterVersion($aggregateRootId, $afterVersion);
+        }
+
+        return $messageRepository->retrieveAllForReplayingAfterDate($this->after());
     }
 
     protected function findProjectors(array $projectors = []): Collection
@@ -72,6 +90,10 @@ class ReplayCommand extends Command
 
     protected function resetStateFor(Collection $consumers): void
     {
+        if ($this->option('after-version') || $this->after() !== null) {
+            return;
+        }
+
         $consumers
             ->map(fn ($consumer) => app($consumer))
             ->each(function ($consumer) {
@@ -90,7 +112,7 @@ class ReplayCommand extends Command
                 if (isset($consumer::$accepts)) {
                     return in_array(get_class($event), $consumer::$accepts);
                 }
-                
+
                 $this->consumerMethods[$consumer] ??= (new ReflectionClass($consumer))
                     ->getMethods(ReflectionMethod::IS_PUBLIC);
 
