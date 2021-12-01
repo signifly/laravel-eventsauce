@@ -91,6 +91,8 @@ class ReplayCommand extends Command
     protected function resetStateFor(Collection $consumers): void
     {
         if ($this->option('after-version') || $this->after() !== null) {
+            $this->info('Skipping state reset...');
+
             return;
         }
 
